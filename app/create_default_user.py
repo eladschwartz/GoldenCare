@@ -1,7 +1,7 @@
 from app.models import User 
-from .database import get_db
-from .utils import hash
-from .config import settings
+from app.database import get_db
+from app.utils import hash
+from app.config import settings
 
 def create_default_user():
     db = get_db()
