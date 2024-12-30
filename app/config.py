@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int
     admin_name: str
     admin_password: str
+    admin_email: str
     
     class Config:
         env_file=".env"
