@@ -1,0 +1,70 @@
+# Python files
+*.py[cod]
+__pycache__/
+*.so
+
+# Environment and package manager files
+env/
+venv/
+env.bak/
+*.env
+*.venv
+Pipfile
+Pipfile.lock
+poetry.lock
+
+# Dependency directories
+site/
+lib/
+lib64/
+
+# Byte-compiled / optimized / DLL files
+*.py[cod]
+*.pyd
+*.pyo
+
+# Logs and debugging
+*.log
+*.out
+*.err
+debug.log
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+*.tmp
+*.bak
+
+# FastAPI-specific files
+*.sqlite3
+*.db
+
+# Test and coverage reports
+.coverage
+*.cover
+*.coverage.*
+.cache/
+nosetests.xml
+pytest_cache/
+.tox/
+htmlcov/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Static and media files
+staticfiles/
+mediafiles/
+
+# Docker
+docker-compose.override.yml
+*.docker

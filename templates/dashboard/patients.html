@@ -1,0 +1,68 @@
+{% extends "base.html" %} 
+
+{% block content %}
+    <div class="container my-4">
+        <h2 class="text-center">מטופלים</h2>
+        <div class="row">
+            <div class="col py-4">
+        <table class="table table-bordered" dir="rtl">
+            <thead>
+                <th>שם מטופל</th>
+                <th>מחלקה</th>
+                <th>פעולה</th>
+                <th>תאריך שחרור</th>
+            </thead>
+            <tbody>
+                {% for patient in data %}
+                    <tr>
+                      <td>
+                        {{ patient.name }}
+                    </td> 
+                    <td>
+                      {{ patient.department.name }}
+                  </td>
+                    <td>
+                        <!-- Delete Form -->
+                        <button type="button" class="btn btn-danger" onclick="deletePatient({{ patient.id }})">מחיקה</button>
+                       <!-- ENND - Delete Form -->
+                      </td>
+                      <td>
+                        <!-- Release Date -->
+                          {% if not patient.release_date %}
+                            <input type="date" name="set_release_date" class="datetimeinput  form-input" id="release_date-{{ patient.id }}">
+                          {% else %}
+                            <input type="date" name="set_release_date" class="datetimeinput  form-input" id="release_date-{{ patient.id }}"  value="{{ patient.release_date.strftime('%Y-%m-%d') }}">
+                          {% endif %}
+                          <button class="submit-button" onclick="updateReleaseDate('{{ patient.id }}', '{{ patient.name }}', '{{ patient.department.id }}')" id="set-release-button">עדכן</button>
+                       <!-- ENND - Release Date -->
+                      </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+      <!-- Add New Patient Form -->
+  <div class="col py-4" id="newpatientform">
+    <form method="POST" action="" dir="rtl" class="p-3" style="max-width: 400px; text-align: right; border: 2px solid #ccc; border-radius: 8px;">
+      <div><h2 class="text-center form-title">הוספת מטופל</h2></div>
+      <div class="form-group py-2">
+        <label for="name" class="form-label">שם מטופל</label>
+        <input class="form-input" type='text' id="patient_name" name="patient_name"></input>
+    </div>
+    <div class="form-group py-2">
+      <label class="form-label">מחלקה</label>
+      <select class="form-input" id="dpeartment" name="dpeartment" required>
+          <!-- This will be populated dynamically -->
+      </select>
+  </div>
+      <div class="form-group py-2">
+        <button type="submit" class="submit-button" name="form_add_new_patient_submit">שלח</button>
+      </div>
+  </form>
+  </div>
+    </div>
+</div>
+<script src="/static/js/patients.js"></script>
+
+{% endblock %}
+

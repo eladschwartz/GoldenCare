@@ -1,0 +1,118 @@
+{% extends "base.html" %} 
+
+{% block content %}
+<div class="container-fluid" dir="rtl">
+  <div class="row py-3">
+  <form method="POST" action="" dir="rtl">
+    <input type="hidden" name="form_type" value="selected_date">
+    <label for="date">בחירת תאריך:</label>
+    <button type="button" onclick="changeDate(-1)" class="btn btn-primary btn-sm">יום הקודם</button>
+    <input type="date" id="main-date-selected" name="date" value="{{ data.selected_date.strftime('%Y-%m-%d') }}">
+    <button type="button" onclick="changeDate(1)" class="btn btn-primary btn-sm">יום הבא</button>
+
+</form>
+<div method="POST" action="" dir="rtl">
+  <input type="hidden" name="form_type" value="selected_copy_date">
+  <label for="date">העתקת טיפולים</label>
+  <input type="date" id="copy-date-selected" name="date">
+  <button type="button" onclick="copyTreatments('{{ data.therapist.id }}', '{{ data.selected_date.strftime('%Y-%m-%d')}}')" class="btn btn-primary btn-sm">העתק</button>
+</div>
+</div>
+<div class="row">
+  <h2 class="text-center">{{ data.therapist.name }} - {{ data.selected_date.strftime('%d/%m/%Y') }}</h2>
+</div>
+<div class="row">
+  <div class="col py-1">
+    <div class="table-responsive">
+      <table class="table table-bordered" dir="rtl">
+        <thead>
+          <th>שעה</th>
+          <th>שם מטופל</th>
+        </thead>
+      <tbody>
+        {% for time, treatment in data.treatments.items() %}
+      <tr>
+          <td>{{ time }}</td>
+          <td>{{ treatment[1].name }}</td>
+          <td>
+              <button type="button" class="btn btn-danger" onclick="deleteTreatment({{ treatment[0] }})">מחיקה</button>
+          </td>
+          <td>
+            <!-- Update Form -->
+            <form method="POST" action="" id="edit-form">
+              <input type="hidden" name="form_type" value="editform">
+              <input type="hidden" name="treatmentid" value="{{ treatment[0] }}">
+              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal"
+              onclick="openEditModal('{{ treatment[0] }}', '{{ treatment[1].id }}','{{ data.selected_date.strftime('%d/%m/%Y')}}','{{ time }}')">עדכן</button>
+          </form>
+            <!-- ENND - Update Form -->
+          </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+      </table>
+  </div>
+</div>
+   <!-- Add New Treatment Form -->
+  <div class="col py-4" id="newtreatmentform">
+    <form method="POST" action="" dir="rtl" class="p-3" style="max-width: 400px; text-align: right; border: 2px solid #ccc; border-radius: 8px;">
+      <div><h2 class="text-center">הוספת טיפול</h2></div>
+      <input type="hidden" id="form_therapist_id" value="{{ data.therapist.id }}">
+      <div class="form-group py-2">
+        <label class="form-label">מטופל</label>
+        <select class="form-input" id="patient" name="patient" required>
+            <!-- This will be populated dynamically -->
+        </select>
+    </div>
+  <div class="form-group py-2">
+    <label for="datetime-input" class="form-label">זמן טיפול</label>
+    <input type="text" 
+           class="form-input" 
+           id="time-picker" 
+           step="900"
+           name="datetime-input">
+  </div>
+      <div class="form-group py-2">
+        <button type="submit" class="submit-button" name="form_add_new_appointment_submit">שלח</button>
+      </div>
+  </form>
+  </div>
+  <!-- END - Add New Therpaist Form -->
+
+     <!-- Update Treatment Form -->
+  <div class="modal fade" id="editModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">עדכון טיפול</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <input type="hidden" id="treatmentId" name="treatmentId">
+                    <div class="mb-3">
+                        <label for="patientSelect" class="form-label">מטופל</label>
+                        <select class="form-input" id="patientSelect" name="patientId" required>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-treatment-date" class="form-label">תאריך</label>
+                        <input type="datetime-local" class="form-input" 
+                               id="edit-treatment-date" name="edit-treatment-date" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="saveEditModalChanges()">עדכן</button>
+                <button type="button" class="btn btn-secondary" onclick="closeEditModal()">סגירה</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+<script src="/static/js/therapist.js"></script>
+
+{% endblock %}
+

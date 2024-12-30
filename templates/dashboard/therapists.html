@@ -1,0 +1,87 @@
+{% extends "base.html" %} 
+
+{% block content %}
+    <div class="container-fluid my-4">
+        <h2 class="text-center">מטפלים</h2>
+        <div class="row">
+            <div class="col py-4">
+        <table class="table table-bordered" dir="rtl">
+            <thead>
+                <th>שם מטפל</th>
+                <th>מחלקה</th>
+                <th>פעולות</th>
+                <th>פעולות</th>
+            </thead>
+            <tbody>
+                {% for therapist in therapists_data %}
+                    <tr>
+                      <td>
+                        <a href="{{url_for("get_treatments_for_user", user_id=therapist.id)}}">
+                        {{ therapist.name }}
+                    </a>
+                    </td> 
+                    <td>
+                        {{ therapist.department.name}}
+                    </td>
+                    <td>
+                        <!-- Delete Form -->
+                        <form method="delete" id="delete-form-{{ therapist.id }}" class="d-inline">
+                          <button type="button" class="btn btn-danger" onclick="deleteUser({{ therapist.id }})">מחיקה</button>
+                      </form>
+                       <!-- ENND - Delete Form -->
+                      </td>
+                      <td>
+                        <div>
+                            <input class="m-2" type='text' id="update-password" name="update-password"></input>
+                            <button type="button" class="btn btn-danger" onclick="updatePassword({{ therapist.id }})">עדכן סיסמא</button>
+                        </div>
+                      </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="col py-4">
+        <form id="therapistForm" class="p-3 form-container" dir="rtl" style="max-width: 400px; text-align: right; border: 2px solid #ccc; border-radius: 8px;">
+            <div><h4 class="text-center">הוספת מטפל</h4></div>
+            <div class="form-group py-2">
+                <label class="form-label" for="name">שם מטפל</label>
+                <input class="form-input" type='text' id="therapist" name="therapist"></input>
+            </div>
+            <div class="form-group py-2">
+                <label class="form-label" for="email">אימייל</label>
+                <input 
+                    class="form-input" 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    required 
+                    pattern="[^@\s]+@[^@\s]+\.[^@\s]+" 
+                    title="נא הכנס אימייל">
+            </div>
+            <div class="form-group py-2">
+                <label class="form-label" for="password">סיסמא</label>
+                <input 
+                    class="form-input" 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    required>
+            </div>
+            <div class="form-group py-2">
+                <label class="form-label">מחלקה</label>
+                <select class="form-input" id="dpeartment" name="dpeartment" required>
+                    <!-- This will be populated dynamically -->
+                </select>
+            </div>
+            
+            <div class="form-group py-2">
+                <button type="submit" class="submit-button">שלח</button>
+            </div>
+        </form>
+    </div>
+    </div>
+</div>
+
+<script src="/static/js/therapists.js"></script>
+{% endblock %}

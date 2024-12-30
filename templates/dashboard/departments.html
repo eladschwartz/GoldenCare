@@ -1,0 +1,49 @@
+{% extends "base.html" %} 
+
+
+
+{% block content %}
+    <div class="container my-4">
+        <h2 class="text-center">מחלקות</h2>
+        <div class="row">
+            <div class="col py-4">
+        <table class="table table-bordered" dir="rtl">
+            <thead>
+                <th>שם מחלקה</th>
+                <th>פעולה</th>
+            </thead>
+            <tbody>
+                {% for department in data %}
+                    <tr>
+                      <td>
+                        {{ department.name }}
+                    </td> 
+                    <td>
+                        <!-- Delete Form -->
+                        <button type="button" class="btn btn-danger" onclick="deleteDepartment({{ department.id }})">מחיקה</button>
+                       <!-- ENND - Delete Form -->
+                      </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+      <!-- Add New Department Form -->
+  <div class="col py-4" id="newdepartmentform">
+    <form method="POST" action="" dir="rtl" class="p-3" style="max-width: 400px; text-align: right; border: 2px solid #ccc; border-radius: 8px;">
+      <div><h2 class="text-center form-title">הוספת מחלקה</h2></div>
+      <div class="form-group py-2">
+        <label for="name" class="form-label">שם מחלקה</label>
+        <input class="form-input" type='text' id="department_name" name="department_name"></input>
+    </div>
+      <div class="form-group py-2">
+        <button type="submit" class="submit-button" name="form_add_new_department_submit">שלח</button>
+      </div>
+  </form>
+  </div>
+    </div>
+</div>
+<script src="/static/js/department.js"></script>
+
+{% endblock %}
+

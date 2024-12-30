@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Admin Dashboard</title>
+    <link rel="stylesheet" href="/static/auth/style.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>GoldenCare</h1>
+            <p>בבקשה התחבר לחשבון שלך</p>
+        </div>
+
+        <div id="error-message" class="error-message"></div>
+
+        <form id="login-form">
+            <div class="form-group">
+                <i class="fas fa-envelope"></i>
+                <input type="email" class="form-control" id="email" placeholder="אימייל" required>
+            </div>
+
+            <div class="form-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" class="form-control" id="password" placeholder="סיסמא" required>
+            </div>
+
+            <div class="form-footer">
+                <div class="form-check">
+                    <input type="checkbox" id="remember">
+                    <label for="remember">זכור אותי</label>
+                </div>
+                <a href="/forgot-password" class="forgot-password">שכחת סיסמא?</a>
+            </div>
+
+            <button type="submit" class="btn-login" id="login-button">
+                כניסה
+            </button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const loginButton = document.getElementById('login-button');
+            const errorMessage = document.getElementById('error-message');
+            
+            errorMessage.style.display = 'none';
+            loginButton.disabled = true;
+            loginButton.textContent = 'מתחבר....';
+
+            try {
+                const formData = new FormData();
+                formData.append('username', email);
+                formData.append('password', password);
+            
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (response.ok) {
+                        const data = await response.json();
+                        // Store the token in localStorage
+                        localStorage.setItem('access_token', data.access_token);
+                        localStorage.setItem('name', data.name);
+                        // Redirect to home page
+                        window.location.href = '/goldencare';
+                    } else {
+                        loginButton.disabled = false;
+                        loginButton.textContent = 'כניסה';
+                        const errorData = await response.json();
+                        const errorMessage = document.getElementById('error-message');
+                        errorMessage.textContent = errorData.detail;
+                        errorMessage.style.display = 'block';
+                        throw new Error(errorData.detail || 'Login failed');
+                    }
+            } catch (error) {
+                loginButton.disabled = false;
+                loginButton.textContent = 'כניסה';
+                const errorMessage = document.getElementById('error-message');
+                errorMessage.textContent = error.message;
+                errorMessage.style.display = 'block';
+            }
+        });
+        
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const rememberedEmail = localStorage.getItem('rememberedEmail');
+            if (rememberedEmail) {
+                document.getElementById('email').value = rememberedEmail;
+                document.getElementById('remember').checked = true;
+            }
+        });
+    </script>
+</body>
+</html>
