@@ -16,7 +16,7 @@ def create_default_user():
                 name=settings.admin_name,
                 department_id = 1,
                 email=settings.admin_email,
-                hashed_password=hash(settings.admin_password),
+                password=hash(settings.admin_password),
             )
             db.add(admin_user)
             db.commit()
