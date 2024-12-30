@@ -1,12 +1,11 @@
-
 from typing import List
 from fastapi import HTTPException, status, Depends, APIRouter, Response, Request
 from .. import models, schemas, oauth2
 from sqlalchemy.orm import Session
 from ..database import get_db
 from fastapi.templating import Jinja2Templates
-from sqlalchemy import not_, exists, and_,or_, func
-from datetime import datetime, date
+from sqlalchemy import not_, exists, and_, func
+from datetime import datetime
 
 templates = Jinja2Templates(directory="templates")
 

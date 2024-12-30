@@ -6,7 +6,7 @@ from .. import database, schemas, models, utils, oauth2
 import pandas as pd
 from io import BytesIO
 from ..schemas import TableData
-from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi.responses import StreamingResponse
 
 router = APIRouter(tags=["Authentiocation"])
 
