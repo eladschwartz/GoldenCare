@@ -31,10 +31,13 @@ async function loadPatients() {
     date.setHours(hours);
     date.setMinutes(minutes);
 
+    // Convert to UTC
+    const utcDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+
     const formData = {
         patient_id: document.getElementById('patient').value,
         therapist_id: document.getElementById('form_therapist_id').value,
-        timestamp: date.toISOString()
+        timestamp: utcDate.toISOString()
     };
     
     try {
