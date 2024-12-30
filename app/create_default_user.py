@@ -6,7 +6,7 @@ from .config import settings
 def create_default_user():
     db = get_db()
     admin_user = db.query(User).filter(
-            User.email == "a@example.com"
+            User.email == settings.admin_email
         ).first()
     if not admin_user:
             # Create new admin user
