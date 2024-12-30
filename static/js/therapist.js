@@ -34,7 +34,7 @@ async function loadPatients() {
     const formData = {
         patient_id: document.getElementById('patient').value,
         therapist_id: document.getElementById('form_therapist_id').value,
-        timestamp: date
+        timestamp: date.toISOString()
     };
     
     try {

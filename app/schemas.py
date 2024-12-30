@@ -76,6 +76,11 @@ class TreatmentCreate(BaseModel):
    therapist_id: int
    timestamp: datetime
    
+   class Config:
+        json_encoders = {
+            datetime: lambda v: v.isoformat()
+        }
+   
 class TreatmentCopyRequest(BaseModel):
     therapist_id: int
     from_date: datetime
