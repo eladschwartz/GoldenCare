@@ -16,8 +16,7 @@ router = APIRouter(
 )
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.PatientOut)
-def create_patient(patient: schemas.PatientCreate, db: Session = Depends(get_db)):
-    
+def create_patient(patient: schemas.PatientCreate, db: Session = Depends(get_db)): 
     new_patient = models.Patient(**patient.model_dump())
     db.add(new_patient)
     db.commit()
@@ -37,18 +36,17 @@ def get_patients_without_treatments(db, target_date):
     if isinstance(target_date, str):
         target_date = datetime.fromisoformat(target_date)
         
+    #Get all patients that don't have treamtent on a spcefic date and also their release date > today
     return (
         db.query(models.Patient)
         .filter(
             and_(
-                # Check that no treatments exist for this patient on the target date
                 not_(exists().where(
                     and_(
                         models.Treatment.patient_id == models.Patient.id,
                         func.date(models.Treatment.timestamp) == target_date
                     ))
                 ),
-                # Either release_date is NULL or it's greater than current date
                 (models.Patient.release_date.is_(None) | (models.Patient.release_date > target_date))
             )
         )
