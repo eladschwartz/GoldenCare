@@ -35,12 +35,12 @@ oauth2_scheme = OAuth2PasswordBearerWithCookie(tokenUrl="token")
 
 SECRET_KEY = settings.secret_key
 ALGORITHM = settings.algorithm
-ACRESS_OTKEN_EXPIRE_MINTUES = settings.access_token_expire_minutes
+ACRESS_TOKEN_EXPIRE_MINTUES = settings.access_token_expire_minutes
 
 def craete_access_token(data: dict):
     to_encode = data.copy()
     
-    expire = datetime.now() + timedelta(minutes=ACRESS_OTKEN_EXPIRE_MINTUES)
+    expire = datetime.now() + timedelta(minutes=ACRESS_TOKEN_EXPIRE_MINTUES)
     to_encode.update({"exp": expire})
     
     try:
