@@ -5,9 +5,10 @@ from . import schemas, database, models
 from fastapi import Depends, Request, status, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.security.utils import get_authorization_scheme_param
-from sqlalchemy.orm import Session
 from .config import settings
 import logging
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 # Modified OAuth2 scheme that can read from cookies
 class OAuth2PasswordBearerWithCookie(OAuth2PasswordBearer):
@@ -68,7 +69,7 @@ def verify_access_token(token:str, credentials_exception):
     return token_data
 
     
-def get_current_user(request: Request, token: str = Depends(oauth2_scheme), db: Session = Depends(database.get_db)):
+async def get_current_user(request: Request, token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                                           detail="Could not validate credentials", headers={"WWW-Authenticate": "Bearer"})
 
@@ -86,8 +87,10 @@ def get_current_user(request: Request, token: str = Depends(oauth2_scheme), db: 
     return token_data.id
 
 
-async def get_current_admin(current_user_id: int = Depends(get_current_user),db: Session = Depends(database.get_db)) -> models.User:
-    user = db.query(models.User).filter(models.User.id == current_user_id).first()
+async def get_current_admin(current_user_id: int = Depends(get_current_user),db: AsyncSession = Depends(database.get_db)) -> models.User:
+    query = select(models.User).where(models.User.id == current_user_id)
+    user = (await db.execute(query)).scalar_one_or_none
+    
     if user.role != "ADMIN":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

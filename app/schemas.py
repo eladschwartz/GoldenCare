@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr, field_validator
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, List
 
 class UserOut(BaseModel):
@@ -47,6 +47,12 @@ class PatientOut(BaseModel):
    name : str
    release_date: datetime | None = None
    department_id: int
+   
+   @field_validator('release_date')
+   def ensure_timezone(cls, v):
+        if v is not None and  v.tzinfo is None:
+            v = v.replace(tzinfo=timezone.utc)
+        return v
    
    class Config:
      from_attributes = True

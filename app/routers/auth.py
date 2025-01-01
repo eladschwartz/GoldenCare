@@ -1,25 +1,28 @@
 from fastapi import APIRouter, Depends, status, HTTPException,Response
 from fastapi.responses import JSONResponse
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
-from sqlalchemy.orm import Session
 from .. import database, schemas, models, utils, oauth2
 import pandas as pd
 from io import BytesIO
 from ..schemas import TableData
 from fastapi.responses import StreamingResponse
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 router = APIRouter(tags=["Authentiocation"])
 
 @router.post('/login', response_model=schemas.Token)
-def login(user_cerdentials: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(database.get_db)):
+async def login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(database.get_db)):
     
-    print(f"Login attempt for username: {user_cerdentials.username}")
-    user = db.query(models.User).filter(models.User.email == user_cerdentials.username).first()
+    print(f"Login attempt for username: {user_credentials.username}")
+    query = select(models.User).where(models.User.email == user_credentials.username)
+    result = await db.execute(query)
+    user = result.scalar_one_or_none()
     
     if not user:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid Credentails")
     
-    if not utils.verify(user_cerdentials.password, user.password):
+    if not utils.verify(user_credentials.password, user.password):
          raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid Credentails")
     
     access_token = oauth2.craete_access_token(data={"user_id": user.id})
@@ -41,7 +44,7 @@ def login(user_cerdentials: OAuth2PasswordRequestForm = Depends(), db: Session =
     return response
 
 @router.post('/logout')
-def log_out(response: Response):
+async def log_out(response: Response):
       response.delete_cookie(
         key="access_token",
         path="/" 

@@ -2,15 +2,15 @@ from app.models import User
 from app.database import get_db
 from app.utils import hash
 from app.config import settings
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
-
-def create_default_user():
-    db = next(get_db())
+async def create_default_user():
+    db : AsyncSession = next(get_db())
     
     try:
-        admin_user = db.query(User).filter(
-            User.email == settings.admin_email
-            ).first()
+        query = select(User).where(User.email == settings.admin_email)
+        admin_user = (await db.execute(query)).scalar_one_or_none()
         if not admin_user:
             admin_user = User(
                 name=settings.admin_name,
@@ -19,7 +19,7 @@ def create_default_user():
                 password=hash(settings.admin_password),
             )
             db.add(admin_user)
-            db.commit()
+            await db.commit()
             print("Default admin user created successfully!")
         else:
             print("Admin user already exists!")

@@ -1,8 +1,13 @@
+from pydantic import field_validator
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, DeclarativeBase
 from sqlalchemy.sql import func
-from .database import Base
+from sqlalchemy.ext.asyncio import AsyncAttrs
+from datetime import timezone
+import pytz
 
+class Base(AsyncAttrs, DeclarativeBase):
+    pass
 
 
 class Department(Base):
@@ -36,6 +41,8 @@ class Patient(Base):
     name = Column(String, nullable=False)
     release_date = Column(DateTime(timezone=True), nullable=True)
     department_id = Column(Integer, ForeignKey("departments.id"), nullable=False)
+    
+   
 
     # Relationships
     department = relationship("Department", back_populates="patients")
